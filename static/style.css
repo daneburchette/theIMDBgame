@@ -1,0 +1,79 @@
+/* static/style.css */
+@font-face {
+    font-family: 'JetBrainsMonoNF';
+    src: url('/diceroller/fonts/JetBrainsMono/JetBrainsMonoNerdFont-Regular.ttf') format('truetype');
+}
+
+body {
+    font-family: 'JetBrainsMonoNF', monospace;
+    background-color: #222436;
+    color: #c8d3f5;
+    margin: 2em;
+}
+
+h1 {
+    color: #82aaff;
+}
+
+h2 {
+    color: #ffc777;
+}
+
+h3 {
+    color: #c3e88d;
+}
+
+h4,
+h5,
+h6 {
+    color: #86e1fc;
+}
+
+a {
+    color: #c099ff;
+    text-decoration: underline dotted;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+form {
+    background-color: #444a73;
+    text-decoration: bold;
+    padding: 1em;
+    border-radius: 8px;
+    max-width: 400px;
+}
+
+select {
+    font-family: inherit;
+    background-color: #1b1d2b;
+    border: 1px solid #86e1fc;
+    color: #c8d3f5;
+    padding: 0.5em;
+    margin: 0.5em 0;
+    border-radius: 4px;
+}
+
+input,
+button {
+    font-family: inherit;
+    background-color: #1b1d2b;
+    border: 1px solid #86e1fc;
+    color: #c8d3f5;
+    padding: 0.5em;
+    margin: 0.5em 0;
+    border-radius: 4px;
+}
+
+button {
+    cursor: pointer;
+}
+
+pre {
+    background-color: #444a73;
+    padding: 1em;
+    border-radius: 8px;
+    overflow-x: auto;
+}

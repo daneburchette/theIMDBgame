@@ -1,0 +1,141 @@
+[
+    {
+        "Number": 1,
+        "MovieTitle": "Italian Spiderman",
+        "MovieYear": 2007,
+        "MovieCast": [
+            "David Ashby",
+            "Chris Asimos"
+        ],
+        "MovieDesc": "When an otherworldly substance with amazing cloning properties falls into the hands of the evil criminal mastermind, Captain Maximum, only the extreme powers of the Italian Spiderman can save the world.",
+        "ActualRating": 7.8,
+        "ActivePlayer": 0,
+        "Type": 0
+    },
+    {
+        "Number": 2,
+        "MovieTitle": "The Amazing Spider-Man",
+        "MovieYear": 2012,
+        "MovieCast": [
+            "Andrew Garfield",
+            "Emma Stone",
+            "Rhys Ifans"
+        ],
+        "MovieDesc": "After Peter Parker is bitten by a genetically altered spider, he gains newfound, spider-like powers and ventures out to save the city from the machinations of a mysterious reptilian foe.",
+        "ActualRating": 6.9,
+        "ActivePlayer": 1,
+        "Type": 0
+    },
+    {
+        "Number": 3,
+        "MovieTitle": "Spider-Man 3",
+        "MovieYear": 2007,
+        "MovieCast": [
+            "Tobey Maguire",
+            "Kristen Dunst",
+            "Topher Grace"
+        ],
+        "MovieDesc": "A strange black entity from another world bonds with Peter Parker and causes inner turmoil as he contends with new villains, temptations, and revenge.",
+        "ActualRating": 6.3,
+        "ActivePlayer": 2,
+        "Type": 0
+    },
+    {
+        "Number": 4,
+        "MovieTitle": "Spider-Man: Far from Home",
+        "MovieYear": 2019,
+        "MovieCast": [
+            "Tom Holland",
+            "Samuel L. Jackson",
+            "Jake Gyllenhaal"
+        ],
+        "MovieDesc": "Peter Parker, the beloved superhero Spider-Man, faces four destructive elemental monsters while on holiday in Europe. Soon, he receives help from Mysterio, a fellow hero with mysterious origins.",
+        "ActualRating": 7.4,
+        "ActivePlayer": 1,
+        "Type": 0
+    },
+    {
+        "Number": 5,
+        "MovieTitle": "Title",
+        "MovieYear": 2010,
+        "MovieCast": [
+            "Lead",
+            "Lead",
+            "Lead"
+        ],
+        "MovieDesc": "Movie Description",
+        "ActualRating": 10.0,
+        "ActivePlayer": 2,
+        "Type": 0
+    },
+    {
+        "Number": 6,
+        "MovieTitle": "Title",
+        "MovieYear": 2010,
+        "MovieCast": [
+            "Lead",
+            "Lead",
+            "Lead"
+        ],
+        "MovieDesc": "Movie Description",
+        "ActualRating": 10.0,
+        "ActivePlayer": 0,
+        "Type": 0
+    },
+    {
+        "Number": 7,
+        "MovieTitle": "Title",
+        "MovieYear": 2010,
+        "MovieCast": [
+            "Lead",
+            "Lead",
+            "Lead"
+        ],
+        "MovieDesc": "Movie Description",
+        "ActualRating": 10.0,
+        "ActivePlayer": 2,
+        "Type": 0
+    },
+    {
+        "Number": 8,
+        "MovieTitle": "Title",
+        "MovieYear": 2010,
+        "MovieCast": [
+            "Lead",
+            "Lead",
+            "Lead"
+        ],
+        "MovieDesc": "Movie Description",
+        "ActualRating": 10.0,
+        "ActivePlayer": 0,
+        "Type": 0
+    },
+    {
+        "Number": 9,
+        "MovieTitle": "Title",
+        "MovieYear": 2010,
+        "MovieCast": [
+            "Lead",
+            "Lead",
+            "Lead"
+        ],
+        "MovieDesc": "Movie Description",
+        "ActualRating": 10.0,
+        "ActivePlayer": 1,
+        "Type": 0
+    },
+    {
+        "Number": 10,
+        "MovieTitle": "Title",
+        "MovieYear": 2010,
+        "MovieCast": [
+            "Lead",
+            "Lead",
+            "Lead"
+        ],
+        "MovieDesc": "Movie Description",
+        "ActualRating": 10.0,
+        "ActivePlayer": 0,
+        "Type": 1
+    }
+]
