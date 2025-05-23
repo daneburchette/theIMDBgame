@@ -1,142 +1,145 @@
-[
-    {
-        "Number": 1,
-        "MovieTitle": "Title",
-        "MovieYear": 2010,
-        "MovieCast": [
-            "Lead",
-            "Lead",
-            "Lead"
-        ],
-        "MovieDesc": "Movie Description",
-        "ActualRating": 10.0,
-        "ActivePlayer": 0,
-        "Type": 0
-    },
-    {
-        "Number": 2,
-        "MovieTitle": "Title",
-        "MovieYear": 2010,
-        "MovieCast": [
-            "Lead",
-            "Lead",
-            "Lead"
-        ],
-        "MovieDesc": "Movie Description",
-        "ActualRating": 10.0,
-        "ActivePlayer": 1,
-        "Type": 0
-    },
-    {
-        "Number": 3,
-        "MovieTitle": "Title",
-        "MovieYear": 2010,
-        "MovieCast": [
-            "Lead",
-            "Lead",
-            "Lead"
-        ],
-        "MovieDesc": "Movie Description",
-        "ActualRating": 10.0,
-        "ActivePlayer": 2,
-        "Type": 0
-    },
-    {
-        "Number": 4,
-        "MovieTitle": "Title",
-        "MovieYear": 2010,
-        "MovieCast": [
-            "Lead",
-            "Lead",
-            "Lead"
-        ],
-        "MovieDesc": "Movie Description",
-        "ActualRating": 10.0,
-        "ActivePlayer": 0,
-        "Type": 0
-    },
-    {
-        "Number": 5,
-        "MovieTitle": "Title",
-        "MovieYear": 2010,
-        "MovieCast": [
-            "Lead",
-            "Lead",
-            "Lead"
-        ],
-        "MovieDesc": "Movie Description",
-        "ActualRating": 10.0,
-        "ActivePlayer": 1,
-        "Type": 0
-    },
-    {
-        "Number": 6,
-        "MovieTitle": "Title",
-        "MovieYear": 2010,
-        "MovieCast": [
-            "Lead",
-            "Lead",
-            "Lead"
-        ],
-        "MovieDesc": "Movie Description",
-        "ActualRating": 10.0,
-        "ActivePlayer": 2,
-        "Type": 0
-    },
-    {
-        "Number": 7,
-        "MovieTitle": "Title",
-        "MovieYear": 2010,
-        "MovieCast": [
-            "Lead",
-            "Lead",
-            "Lead"
-        ],
-        "MovieDesc": "Movie Description",
-        "ActualRating": 10.0,
-        "ActivePlayer": 0,
-        "Type": 0
-    },
-    {
-        "Number": 8,
-        "MovieTitle": "Title",
-        "MovieYear": 2010,
-        "MovieCast": [
-            "Lead",
-            "Lead",
-            "Lead"
-        ],
-        "MovieDesc": "Movie Description",
-        "ActualRating": 10.0,
-        "ActivePlayer": 1,
-        "Type": 0
-    },
-    {
-        "Number": 9,
-        "MovieTitle": "Title",
-        "MovieYear": 2010,
-        "MovieCast": [
-            "Lead",
-            "Lead",
-            "Lead"
-        ],
-        "MovieDesc": "Movie Description",
-        "ActualRating": 10.0,
-        "ActivePlayer": 2,
-        "Type": 0
-    },
-    {
-        "Number": 10,
-        "MovieTitle": "Title",
-        "MovieYear": 2010,
-        "MovieCast": [
-            "Lead",
-            "Lead",
-            "Lead"
-        ],
-        "MovieDesc": "Movie Description",
-        "ActualRating": 10.0,
-        "ActivePlayer": 0,
-        "Type": 0
-    }
-]
+{
+    "game_name": "IMDB Game",
+    "rounds": [
+        {
+            "Number": 1,
+            "MovieTitle": "Title",
+            "MovieYear": 2010,
+            "MovieCast": [
+                "Lead",
+                "Lead",
+                "Lead"
+            ],
+            "MovieDesc": "Movie Description",
+            "ActualRating": 10.0,
+            "ActivePlayer": 0,
+            "Type": 0
+        },
+        {
+            "Number": 2,
+            "MovieTitle": "Title",
+            "MovieYear": 2010,
+            "MovieCast": [
+                "Lead",
+                "Lead",
+                "Lead"
+            ],
+            "MovieDesc": "Movie Description",
+            "ActualRating": 10.0,
+            "ActivePlayer": 1,
+            "Type": 0
+        },
+        {
+            "Number": 3,
+            "MovieTitle": "Title",
+            "MovieYear": 2010,
+            "MovieCast": [
+                "Lead",
+                "Lead",
+                "Lead"
+            ],
+            "MovieDesc": "Movie Description",
+            "ActualRating": 10.0,
+            "ActivePlayer": 2,
+            "Type": 0
+        },
+        {
+            "Number": 4,
+            "MovieTitle": "Title",
+            "MovieYear": 2010,
+            "MovieCast": [
+                "Lead",
+                "Lead",
+                "Lead"
+            ],
+            "MovieDesc": "Movie Description",
+            "ActualRating": 10.0,
+            "ActivePlayer": 0,
+            "Type": 0
+        },
+        {
+            "Number": 5,
+            "MovieTitle": "Title",
+            "MovieYear": 2010,
+            "MovieCast": [
+                "Lead",
+                "Lead",
+                "Lead"
+            ],
+            "MovieDesc": "Movie Description",
+            "ActualRating": 10.0,
+            "ActivePlayer": 1,
+            "Type": 0
+        },
+        {
+            "Number": 6,
+            "MovieTitle": "Title",
+            "MovieYear": 2010,
+            "MovieCast": [
+                "Lead",
+                "Lead",
+                "Lead"
+            ],
+            "MovieDesc": "Movie Description",
+            "ActualRating": 10.0,
+            "ActivePlayer": 2,
+            "Type": 0
+        },
+        {
+            "Number": 7,
+            "MovieTitle": "Title",
+            "MovieYear": 2010,
+            "MovieCast": [
+                "Lead",
+                "Lead",
+                "Lead"
+            ],
+            "MovieDesc": "Movie Description",
+            "ActualRating": 10.0,
+            "ActivePlayer": 0,
+            "Type": 0
+        },
+        {
+            "Number": 8,
+            "MovieTitle": "Title",
+            "MovieYear": 2010,
+            "MovieCast": [
+                "Lead",
+                "Lead",
+                "Lead"
+            ],
+            "MovieDesc": "Movie Description",
+            "ActualRating": 10.0,
+            "ActivePlayer": 1,
+            "Type": 0
+        },
+        {
+            "Number": 9,
+            "MovieTitle": "Title",
+            "MovieYear": 2010,
+            "MovieCast": [
+                "Lead",
+                "Lead",
+                "Lead"
+            ],
+            "MovieDesc": "Movie Description",
+            "ActualRating": 10.0,
+            "ActivePlayer": 2,
+            "Type": 0
+        },
+        {
+            "Number": 10,
+            "MovieTitle": "Title",
+            "MovieYear": 2010,
+            "MovieCast": [
+                "Lead",
+                "Lead",
+                "Lead"
+            ],
+            "MovieDesc": "Movie Description",
+            "ActualRating": 10.0,
+            "ActivePlayer": 0,
+            "Type": 0
+        }
+    ]
+}

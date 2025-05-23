@@ -7,8 +7,9 @@
 </head>
 
 <body>
-    <h1>Round {{.CurrentRound.Number}}</h1>
-    <h2>{{.CurrentRound.MovieTitle}} ({{.CurrentRound.MovieYear}})</h2>
+    <h1>{{.GameName}}</h1>
+    <h2>Round {{.CurrentRound.Number}}</h2>
+    <h3>{{.CurrentRound.MovieTitle}} ({{.CurrentRound.MovieYear}})</h3>
     <p><strong>Cast:</strong> {{range .CurrentRound.MovieCast}}{{.}}, {{end}}</p>
     <p><strong>Description:</strong> {{.CurrentRound.MovieDesc}}</p>
 
@@ -25,12 +26,16 @@
 
     <h3>Scores</h3>
     <ul>
-        {{range .Players}}
-        <li>{{.Name}}: {{.Score}}</li>
+        {{range $i, $p := .Players}}
+        <li>
+            {{if eq $i $.CurrentRound.ActivePlayer}}<strong>{{end}}
+                {{$p.Name}}: {{$p.Score}}
+                {{if eq $i $.CurrentRound.ActivePlayer}}</strong>{{end}}
+        </li>
         {{end}}
     </ul>
 
-    <button id="next" onclick="nextRound()">Next Round</button>
+    <button onclick="location.reload()">Next Round</button>
 
     <script>
         const form = document.getElementById('answer-form');
@@ -44,9 +49,9 @@
             location.reload();
         });
 
-        async function nextRound() {
-            await fetch('/next');
-            location.reload();
+        function toggleRules() {
+            const rules = document.getElementById("rules");
+            rules.style.display = (rules.style.display === "none") ? "block" : "none";
         }
     </script>
 
@@ -55,7 +60,6 @@
     <div id="rules" style="display: none; margin-top: 1em;">
         <h2>The IMDb Game</h2>
         <h3>Rules (3 Players)</h3>
-
         <p>The game consists of 10 rounds, arranged in three sets of 3 rounds each, followed by a final 10th round with
             slightly different rules.</p>
 
@@ -67,7 +71,6 @@
             <li>Notable cast members</li>
             <li>A short description</li>
         </ul>
-
         <p>The Active Player then guesses the movie’s IMDb rating (to the nearest tenth of a point). After that, the
             other two players guess whether the <strong>actual score is higher or lower</strong> than the Active
             Player’s guess.</p>
@@ -78,7 +81,6 @@
             <li>Players who guessed incorrectly earn <strong>1 point each for the Active Player</strong>.</li>
             <li>If the Active Player guessed the exact score, they earn <strong>3 bonus points</strong>.</li>
         </ul>
-
         <p>The role of Active Player rotates each round so all players get a turn.</p>
 
         <h4>Scoring Multiplier</h4>
@@ -91,24 +93,11 @@
         <h4>Final Round (Round 10)</h4>
         <p>In the final round, all players submit their guesses <strong>in secret</strong>, without a designated Active
             Player. Whoever is <strong>closest to the actual IMDb score</strong> wins the round.</p>
-
         <p>In the event of a tie for closest, the points go to the closest without going over (<em>'Price is Right'
                 style</em>).</p>
-
         <p>Points awarded in this round are <strong>arbitrarily high</strong>, making the first 9 rounds largely
             irrelevant — because that’s funny.</p>
     </div>
-
-    <script>
-        function toggleRules() {
-            const rules = document.getElementById("rules");
-            if (rules.style.display === "none") {
-                rules.style.display = "block";
-            } else {
-                rules.style.display = "none";
-            }
-        }
-    </script>
 </body>
 
 </html>

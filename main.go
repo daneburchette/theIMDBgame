@@ -3,6 +3,7 @@ package imdbweb
 import (
 	"bufio"
 	"encoding/json"
+	"flag"
 	"fmt"
 	"html/template"
 	"log"
@@ -11,6 +12,7 @@ import (
 	"os"
 	"sort"
 	"strconv"
+	"strings"
 	"sync"
 )
 
@@ -46,27 +48,47 @@ type Round struct {
 	RatingGuessed bool
 }
 
+// RoundSet contains metadata and the rounds for a game.
+type RoundSet struct {
+	GameName string  `json:"game_name"`
+	Rounds   []Round `json:"rounds"`
+}
+
 // GameState holds the current state of the game.
 type GameState struct {
-	Players      []Player
-	CurrentRound Round
-	RoundHistory []Round
-	AllRounds    []Round
-	Mutex        sync.Mutex
+	Players       []Player
+	CurrentRound  Round
+	RoundHistory  []Round
+	AllRounds     []Round
+	GameName      string
+	Mutex         sync.Mutex
+	RoundAdvanced bool // Prevents multiple round advances
 }
 
 // Global game state
 var state = GameState{
-	Players: []Player{
-		{Name: "Alice"},
-		{Name: "Bob"},
-		{Name: "Carol"},
-	},
+	Players: []Player{},
 }
 
 // main initializes the game, loads rounds, and starts the web server.
 func main() {
-	loadRoundsFromJSON("static/rounds.json")
+	// Define CLI flags
+	port := flag.Int("port", 8080, "Port number for the server")
+	playersArg := flag.String("players", "Alice,Bob,Carol", "Comma-separated list of player names")
+	jsonFile := flag.String("json", "static/rounds.json", "Path to JSON file containing round data")
+	flag.Parse()
+
+	// Initialize players from CLI
+	names := strings.Split(*playersArg, ",")
+	for _, name := range names {
+		state.Players = append(state.Players, Player{Name: strings.TrimSpace(name)})
+	}
+
+	// Load rounds from JSON file
+	loadRoundsFromJSON(*jsonFile)
+	if len(state.AllRounds) == 0 {
+		log.Fatal("No rounds loaded from JSON file.")
+	}
 	state.CurrentRound = state.AllRounds[0]
 
 	http.HandleFunc("/", gamePageHandler)
@@ -75,8 +97,9 @@ func main() {
 	http.HandleFunc("/next", nextRoundHandler)
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 
-	fmt.Println("Server running at http://localhost:8080")
-	http.ListenAndServe(":8080", nil)
+	addr := fmt.Sprintf(":%d", *port)
+	fmt.Printf("Server running at http://localhost%s\n", addr)
+	http.ListenAndServe(addr, nil)
 }
 
 // loadRoundsFromJSON reads and unmarshals round data from a JSON file.
@@ -85,12 +108,13 @@ func loadRoundsFromJSON(filename string) {
 	if err != nil {
 		log.Fatalf("Failed to read rounds JSON: %v", err)
 	}
-	var rounds []Round
-	err = json.Unmarshal(data, &rounds)
+	var roundSet RoundSet
+	err = json.Unmarshal(data, &roundSet)
 	if err != nil {
 		log.Fatalf("Failed to parse rounds JSON: %v", err)
 	}
-	state.AllRounds = rounds
+	state.AllRounds = roundSet.Rounds
+	state.GameName = roundSet.GameName
 }
 
 // gamePageHandler renders the game page using HTML templates.
@@ -118,11 +142,12 @@ func submitHandler(w http.ResponseWriter, r *http.Request) {
 			break
 		}
 	}
-	if state.CurrentRound.GuessesIn == 3 {
+	if state.CurrentRound.GuessesIn == len(state.Players) {
 		log.Println("All guesses submitted. Press ENTER to score the round...")
 		reader := bufio.NewReader(os.Stdin)
 		reader.ReadString('\n')
 		scoreRound()
+		state.RoundAdvanced = false // Reset so "Next" can be called for new round
 		log.Println("Round scored.")
 	}
 	state.Mutex.Unlock()
@@ -200,20 +225,37 @@ func statusHandler(w http.ResponseWriter, r *http.Request) {
 // nextRoundHandler advances the game to the next round and resets state.
 func nextRoundHandler(w http.ResponseWriter, r *http.Request) {
 	state.Mutex.Lock()
+	defer state.Mutex.Unlock()
+
+	if state.RoundAdvanced {
+		log.Println("Round already advanced by another client.")
+		w.WriteHeader(http.StatusConflict)
+		return
+	}
+
 	nextIndex := state.CurrentRound.Number
 	if nextIndex >= len(state.AllRounds) {
 		log.Println("No more rounds available.")
-		state.Mutex.Unlock()
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
+
 	state.CurrentRound = state.AllRounds[nextIndex]
 	for i := range state.Players {
 		state.Players[i].Guess = 0
 		state.Players[i].Choice = ""
 	}
 	state.CurrentRound.GuessesIn = 0
+	state.RoundAdvanced = true
+
+	// Print movie and player info to CLI
+	rnd := state.CurrentRound
+	log.Printf("=== Round %d ===", rnd.Number)
+	log.Printf("Movie: %s (%d)", rnd.MovieTitle, rnd.MovieYear)
+	log.Printf("Description: %s", rnd.MovieDesc)
+	log.Printf("Cast: %s", strings.Join(rnd.MovieCast, ", "))
+	log.Printf("Active Player: %s", state.Players[rnd.ActivePlayer].Name)
+
 	log.Printf("Started Round %d", state.CurrentRound.Number)
-	state.Mutex.Unlock()
 	w.WriteHeader(http.StatusOK)
 }
