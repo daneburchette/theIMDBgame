@@ -1,4 +1,4 @@
-package imdbweb
+package main
 
 import (
 	"bufio"
