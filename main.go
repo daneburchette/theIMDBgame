@@ -49,10 +49,11 @@ type GameState struct {
 	Questions           []Question `json:"Questions"`
 	QuestionNumber      int
 	CurrentQuestion     Question
+	PointValue          int
 	PlayerInputs        int
-	Mutex               sync.Mutex
 	RoundAdvanced       bool
 	LoggedIn            bool
+	Mutex               sync.Mutex
 }
 
 func CreateGameState(state *GameState, filename string, playerCount *int) {
@@ -80,6 +81,62 @@ func (g *GameState) NextQuestion() {
 	}
 	log.Println("Advanced to next round")
 	g.CurrentQuestion.PrintQuestion()
+}
+
+func (g *GameState) ScoreQuestion() {
+	var target float64
+	for _, player := range g.Players {
+		if player.Active {
+			target = player.Guess
+		}
+	}
+
+	var activeScore int
+	var exactScore bool
+	var exactStole bool
+	switch {
+	case g.CurrentQuestion.Rating > target:
+		for i := range g.Players {
+			if g.Players[i].Choice == "higher" && !g.Players[i].Active {
+				g.Players[i].Score += g.PointValue
+				log.Printf("%s scored %d points\n", g.Players[i], g.PointValue)
+			} else {
+				activeScore += g.PointValue
+			}
+		}
+	case g.CurrentQuestion.Rating < target:
+		for i := range g.Players {
+			if g.Players[i].Choice == "lower" && !g.Players[i].Active {
+				log.Printf("%s scored %d points\n", g.Players[i], g.PointValue)
+				g.Players[i].Score += g.PointValue
+			} else {
+				activeScore += g.PointValue
+			}
+		}
+	case g.CurrentQuestion.Rating == target:
+		exactScore = true
+		for i := range g.Players {
+			if g.Players[i].Choice == "exact" && !g.Players[i].Active {
+				g.Players[i].Score += g.PointValue + 5
+				log.Printf("%s scored %d points AND stole the 5 point bonus!\n", g.Players[i], g.PointValue)
+				exactStole = true
+			} else {
+				activeScore += g.PointValue
+			}
+		}
+	}
+	for i := range g.Players {
+		if g.Players[i].Active {
+			g.Players[i].Score += activeScore
+			log.Printf("%s scored %d points\n", g.Players[i], activeScore)
+			if exactScore && !exactStole {
+				g.Players[i].Score += 5
+				log.Printf("%s scored a cool 5 point bonus!\n", g.Players[i])
+			} else if exactScore && exactStole {
+				log.Printf("%s lost their cool 5 point bonus!\n", g.Players[i])
+			}
+		}
+	}
 }
 
 var state GameState

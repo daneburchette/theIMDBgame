@@ -2,20 +2,21 @@
 <html>
 
 <head>
+    <meta charset="UTF-8">
     <title>IMDB Game</title>
     <link rel="stylesheet" href="/static/style.css">
 </head>
 
 <body>
     <!-- <h1>The Test IMDB Game</h1> -->
-    <h1 align="center">{{.GameName}}</h1>
-    <h2 align="center">Question {{.CurrentQuestion.Number}}</h2>
+    <h1>{{.GameName}}</h1>
+    <h2>Question {{.CurrentQuestion.Number}}</h2>
     <h3>{{.CurrentQuestion.Title}} ({{.CurrentQuestion.Year}})</h3>
     <p><strong>Cast:</strong> {{range .CurrentQuestion.Cast}}{{.}}, {{end}}</p>
     <p><strong>Description:</strong> {{.CurrentQuestion.Desc}}</p>
     <p><strong>User Count:</strong> {{.CurrentQuestion.UserCount}}</p>
 
-    <form id="answer-form" action="/submit" method="POST">
+    <form action="/submit" method="POST">
         <label>Guess: <input type="number" name="guess" step="0.1" min="0" max="10" placeholder="5.0"
                 required></label><br>
         <label>Choice: <select name="choice">
@@ -35,7 +36,7 @@
         {{end}}
     </ul>
     <form action="/next" method="POST">
-        <button type="submit">Next Round</button>
+        <button type="submit">Next Question</button>
     </form>
 </body>
 

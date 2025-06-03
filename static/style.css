@@ -35,7 +35,7 @@
 
 @font-face {
     font-family: 'JetBrainsMonoNF';
-    src: url('/static/JetbrainsMono/JetBrainsMonoNerdFont-Regular.ttf') format('truetpe');
+    src: url('/static/JetbrainsMono/JetBrainsMonoNerdFont-Regular.ttf') format('truetype');
 }
 
 body {
@@ -46,10 +46,12 @@ body {
 }
 
 h1 {
+    text-align: center;
     color: var(--blue);
 }
 
 h2 {
+    text-align: center;
     color: var(--yellow);
 }
 
@@ -75,6 +77,7 @@ a:hover {
 form {
     background-color: var(--terminal_black);
     font-weight: bold;
+    text-align: center;
     padding: 1em;
     border-radius: 8px;
 }
