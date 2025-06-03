@@ -90,7 +90,6 @@ func (g *GameState) ScoreQuestion() {
 			target = player.Guess
 		}
 	}
-
 	var activeScore int
 	var exactScore bool
 	var exactStole bool
@@ -99,7 +98,7 @@ func (g *GameState) ScoreQuestion() {
 		for i := range g.Players {
 			if g.Players[i].Choice == "higher" && !g.Players[i].Active {
 				g.Players[i].Score += g.PointValue
-				log.Printf("%s scored %d points\n", g.Players[i], g.PointValue)
+				log.Printf("%s scored %d points\n", g.Players[i].Name, g.PointValue)
 			} else {
 				activeScore += g.PointValue
 			}
@@ -107,7 +106,7 @@ func (g *GameState) ScoreQuestion() {
 	case g.CurrentQuestion.Rating < target:
 		for i := range g.Players {
 			if g.Players[i].Choice == "lower" && !g.Players[i].Active {
-				log.Printf("%s scored %d points\n", g.Players[i], g.PointValue)
+				log.Printf("%s scored %d points\n", g.Players[i].Name, g.PointValue)
 				g.Players[i].Score += g.PointValue
 			} else {
 				activeScore += g.PointValue
@@ -118,7 +117,7 @@ func (g *GameState) ScoreQuestion() {
 		for i := range g.Players {
 			if g.Players[i].Choice == "exact" && !g.Players[i].Active {
 				g.Players[i].Score += g.PointValue + 5
-				log.Printf("%s scored %d points AND stole the 5 point bonus!\n", g.Players[i], g.PointValue)
+				log.Printf("%s scored %d points AND stole the 5 point bonus!\n", g.Players[i].Name, g.PointValue)
 				exactStole = true
 			} else {
 				activeScore += g.PointValue
@@ -128,12 +127,12 @@ func (g *GameState) ScoreQuestion() {
 	for i := range g.Players {
 		if g.Players[i].Active {
 			g.Players[i].Score += activeScore
-			log.Printf("%s scored %d points\n", g.Players[i], activeScore)
+			log.Printf("%s scored %d points\n", g.Players[i].Name, activeScore)
 			if exactScore && !exactStole {
 				g.Players[i].Score += 5
-				log.Printf("%s scored a cool 5 point bonus!\n", g.Players[i])
+				log.Printf("%s scored a cool 5 point bonus!\n", g.Players[i].Name)
 			} else if exactScore && exactStole {
-				log.Printf("%s lost their cool 5 point bonus!\n", g.Players[i])
+				log.Printf("%s lost their cool 5 point bonus!\n", g.Players[i].Name)
 			}
 		}
 	}
