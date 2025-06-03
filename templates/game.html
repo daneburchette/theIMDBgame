@@ -2,102 +2,41 @@
 <html>
 
 <head>
-    <title>IMDb Game</title>
+    <title>IMDB Game</title>
     <link rel="stylesheet" href="/static/style.css">
 </head>
 
 <body>
-    <h1>{{.GameName}}</h1>
-    <h2>Round {{.CurrentRound.Number}}</h2>
-    <h3>{{.CurrentRound.MovieTitle}} ({{.CurrentRound.MovieYear}})</h3>
-    <p><strong>Cast:</strong> {{range .CurrentRound.MovieCast}}{{.}}, {{end}}</p>
-    <p><strong>Description:</strong> {{.CurrentRound.MovieDesc}}</p>
+    <!-- <h1>The Test IMDB Game</h1> -->
+    <h1 align="center">{{.GameName}}</h1>
+    <h2 align="center">Question {{.CurrentQuestion.Number}}</h2>
+    <h3>{{.CurrentQuestion.Title}} ({{.CurrentQuestion.Year}})</h3>
+    <p><strong>Cast:</strong> {{range .CurrentQuestion.Cast}}{{.}}, {{end}}</p>
+    <p><strong>Description:</strong> {{.CurrentQuestion.Desc}}</p>
+    <p><strong>User Count:</strong> {{.CurrentQuestion.UserCount}}</p>
 
-    <form id="answer-form">
-        <label>Name: <input type="text" name="name" required></label><br>
-        <label>Guess: <input type="number" name="guess" step="0.1" min="0" max="10" required></label><br>
-        <label>Choice (if not Active): <select name="choice">
-                <option value="">--</option>
+    <form id="answer-form" action="/submit" method="POST">
+        <label>Guess: <input type="number" name="guess" step="0.1" min="0" max="10" placeholder="5.0"
+                required></label><br>
+        <label>Choice: <select name="choice">
+                <option value="exact">Exact</option>
                 <option value="higher">Higher</option>
                 <option value="lower">Lower</option>
-            </select></label><br>
+            </select> </label> <br>
         <button type="submit">Submit</button>
     </form>
 
-    <h3>Scores</h3>
+    <h3>Score</h3>
     <ul>
         {{range $i, $p := .Players}}
         <li>
-            {{if eq $i $.CurrentRound.ActivePlayer}}<strong>{{end}}
-                {{$p.Name}}: {{$p.Score}}
-                {{if eq $i $.CurrentRound.ActivePlayer}}</strong>{{end}}
+            <strong>{{$p.Name}}</strong>: {{$p.Score}}
         </li>
         {{end}}
     </ul>
-
-    <button onclick="location.reload()">Next Round</button>
-
-    <script>
-        const form = document.getElementById('answer-form');
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const formData = new FormData(form);
-            await fetch('/submit', {
-                method: 'POST',
-                body: formData
-            });
-            location.reload();
-        });
-
-        function toggleRules() {
-            const rules = document.getElementById("rules");
-            rules.style.display = (rules.style.display === "none") ? "block" : "none";
-        }
-    </script>
-
-    <button onclick="toggleRules()">Show Rules</button>
-
-    <div id="rules" style="display: none; margin-top: 1em;">
-        <h2>The IMDb Game</h2>
-        <h3>Rules (3 Players)</h3>
-        <p>The game consists of 10 rounds, arranged in three sets of 3 rounds each, followed by a final 10th round with
-            slightly different rules.</p>
-
-        <h4>Normal Rounds</h4>
-        <p>In each normal round, one player is selected as the <strong>Active Player</strong>. All players are presented
-            with a movie, including:</p>
-        <ul>
-            <li>Its title and year of release</li>
-            <li>Notable cast members</li>
-            <li>A short description</li>
-        </ul>
-        <p>The Active Player then guesses the movie’s IMDb rating (to the nearest tenth of a point). After that, the
-            other two players guess whether the <strong>actual score is higher or lower</strong> than the Active
-            Player’s guess.</p>
-
-        <p>Once all guesses are in:</p>
-        <ul>
-            <li>Players who guessed correctly (higher/lower) earn <strong>1 point</strong> each.</li>
-            <li>Players who guessed incorrectly earn <strong>1 point each for the Active Player</strong>.</li>
-            <li>If the Active Player guessed the exact score, they earn <strong>3 bonus points</strong>.</li>
-        </ul>
-        <p>The role of Active Player rotates each round so all players get a turn.</p>
-
-        <h4>Scoring Multiplier</h4>
-        <ul>
-            <li><strong>Set 1 (Rounds 1–3):</strong> Normal points</li>
-            <li><strong>Set 2 (Rounds 4–6):</strong> Double points</li>
-            <li><strong>Set 3 (Rounds 7–9):</strong> Triple points</li>
-        </ul>
-
-        <h4>Final Round (Round 10)</h4>
-        <p>In the final round, all players submit their guesses <strong>in secret</strong>, without a designated Active
-            Player. Whoever is <strong>closest to the actual IMDb score</strong> wins the round.</p>
-        <p>In the event of a tie for closest, the points go to the closest without going over (<em>'Price is Right'
-                style</em>).</p>
-        <p>Points awarded in this round are <strong>arbitrarily high</strong>, making the first 9 rounds largely
-            irrelevant — because that’s funny.</p>
-    </div>
+    <form action="/next" method="POST">
+        <button type="submit">Next Round</button>
+    </form>
 </body>
 
 </html>
