@@ -72,9 +72,9 @@ type PlayerCountSet struct {
 }
 
 func CreateGameState(state *GameState, filename string, playerCount *int) {
+	state.ExpectedPlayerCount = *playerCount
 	loadGameFromJSON(state, filename)
 	state.QuestionNumber = -1
-	state.ExpectedPlayerCount = *playerCount
 }
 
 func (g *GameState) NextQuestion() {
@@ -218,20 +218,21 @@ func loadGameFromJSON(state *GameState, filename string) {
 	}
 	var rounds PlayerCountSet
 	pcdata, err := os.ReadFile(pcFilename)
+	log.Println(pcFilename)
 	if err != nil {
-		log.Fatalf("Failed to read game data from JSON: %v", err)
+		log.Fatalf("Failed to read playercount data from JSON: %v", err)
 	}
 	err = json.Unmarshal(pcdata, &rounds)
 	if err != nil {
-		log.Fatalf("Failed to read game data from JSON: %v", err)
+		log.Fatalf("Failed to unmarshal playercount data from JSON: %v", err)
 	}
 	questionUpdate(state, &rounds)
 }
 
 func questionUpdate(state *GameState, rounds *PlayerCountSet) {
 	for i := range rounds.ParsedJson {
-		if rounds.ParsedJson[i].FinalRound && rounds.ParsedJson[i].RoundNumber != len(state.Questions) {
-			finalNumber := rounds.ParsedJson[i].RoundNumber
+		if rounds.ParsedJson[i].FinalRound && rounds.ParsedJson[i].Number != len(state.Questions) {
+			finalNumber := rounds.ParsedJson[i].Number
 			state.Questions = append(state.Questions[:finalNumber], state.Questions[len(state.Questions)-1:]...)
 			state.Questions[finalNumber].Number = finalNumber
 		}
@@ -279,8 +280,6 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func submitHandler(w http.ResponseWriter, r *http.Request) {
-	// name := r.URL.Query().Get("name")
-	// name := r.FormValue("name")
 	cookie, err := r.Cookie("playerID")
 	if err != nil {
 		http.Error(w, "Player not identified", http.StatusUnauthorized)
@@ -313,8 +312,8 @@ func submitHandler(w http.ResponseWriter, r *http.Request) {
 		log.Println("All guesses submitted. Press ENTER to score the round...")
 		reader := bufio.NewReader(os.Stdin)
 		reader.ReadString('\n')
-		// scoreRound()
 		state.RoundAdvanced = false
+		state.ScoreQuestion()
 		log.Println("Round Scored.")
 	}
 
