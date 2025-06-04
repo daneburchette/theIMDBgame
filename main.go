@@ -24,14 +24,17 @@ type Player struct {
 }
 
 type Question struct {
-	Number    int
-	Title     string
-	Year      int
-	Cast      []string
-	Desc      string
-	UserCount int
-	Rating    float64
-	Final     bool
+	Number       int
+	Title        string
+	Year         int
+	Cast         []string
+	Desc         string
+	UserCount    int
+	Rating       float64
+	RoundNumber  int
+	Points       int
+	ActivePlayer int
+	FinalRound   bool
 }
 
 func (q *Question) PrintQuestion() {
@@ -54,6 +57,18 @@ type GameState struct {
 	RoundAdvanced       bool
 	LoggedIn            bool
 	Mutex               sync.Mutex
+}
+
+type PlayerCount struct {
+	Number       int
+	RoundNumber  int
+	Points       int
+	ActivePlayer int
+	FinalRound   bool
+}
+
+type PlayerCountSet struct {
+	ParsedJson []PlayerCount `json:"Questions"`
 }
 
 func CreateGameState(state *GameState, filename string, playerCount *int) {
@@ -145,7 +160,7 @@ func main() {
 	playerCount := flag.Int("players", 1, "Number of Players for game")
 	flag.Parse()
 
-	CreateGameState(&state, "static/JSON/Questions/Questions.json", playerCount)
+	CreateGameState(&state, "static/JSON/questions/questions.json", playerCount)
 
 	http.HandleFunc("/", indexHandler)
 	http.HandleFunc("/game", gameHandler)
@@ -180,6 +195,19 @@ func gameHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func loadGameFromJSON(state *GameState, filename string) {
+	var pcFilename string
+	switch state.ExpectedPlayerCount {
+	case 1:
+		pcFilename = "static/JSON/playercounts/1player.json"
+	case 2:
+		pcFilename = "static/JSON/playercounts/2player.json"
+	case 3:
+		pcFilename = "static/JSON/playercounts/3player.json"
+	case 4:
+		pcFilename = "static/JSON/playercounts/4player.json"
+	case 5:
+		pcFilename = "static/JSON/playercounts/5player.json"
+	}
 	data, err := os.ReadFile(filename)
 	if err != nil {
 		log.Fatalf("Failed to read game data from JSON: %v", err)
@@ -187,6 +215,29 @@ func loadGameFromJSON(state *GameState, filename string) {
 	err = json.Unmarshal(data, state)
 	if err != nil {
 		log.Fatalf("Failed to read game data from JSON: %v", err)
+	}
+	var rounds PlayerCountSet
+	pcdata, err := os.ReadFile(pcFilename)
+	if err != nil {
+		log.Fatalf("Failed to read game data from JSON: %v", err)
+	}
+	err = json.Unmarshal(pcdata, &rounds)
+	if err != nil {
+		log.Fatalf("Failed to read game data from JSON: %v", err)
+	}
+	questionUpdate(state, &rounds)
+}
+
+func questionUpdate(state *GameState, rounds *PlayerCountSet) {
+	for i := range rounds.ParsedJson {
+		if rounds.ParsedJson[i].FinalRound && rounds.ParsedJson[i].RoundNumber != len(state.Questions) {
+			finalNumber := rounds.ParsedJson[i].RoundNumber
+			state.Questions = append(state.Questions[:finalNumber], state.Questions[len(state.Questions)-1:]...)
+			state.Questions[finalNumber].Number = finalNumber
+		}
+		state.Questions[i].RoundNumber = rounds.ParsedJson[i].RoundNumber
+		state.Questions[i].Points = rounds.ParsedJson[i].Points
+		state.Questions[i].ActivePlayer = rounds.ParsedJson[i].ActivePlayer
 	}
 }
 
