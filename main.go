@@ -71,10 +71,11 @@ type PlayerCountSet struct {
 	ParsedJson []PlayerCount `json:"Questions"`
 }
 
-func CreateGameState(state *GameState, filename string, playerCount *int) {
-	state.ExpectedPlayerCount = *playerCount
-	loadGameFromJSON(state, filename)
+func CreateGameState(state *GameState, filename string, playerCount int) {
+	state.ExpectedPlayerCount = playerCount
 	state.QuestionNumber = -1
+
+	loadGameFromJSON(state, filename)
 }
 
 func (g *GameState) NextQuestion() {
@@ -99,6 +100,7 @@ func (g *GameState) NextQuestion() {
 }
 
 func (g *GameState) ScoreQuestion() {
+	log.Println("Scoring Triggered")
 	var target float64
 	for _, player := range g.Players {
 		if player.Active {
@@ -106,37 +108,29 @@ func (g *GameState) ScoreQuestion() {
 		}
 	}
 	var activeScore int
+	var targetChoice string
 	var exactScore bool
 	var exactStole bool
 	switch {
 	case g.CurrentQuestion.Rating > target:
-		for i := range g.Players {
-			if g.Players[i].Choice == "higher" && !g.Players[i].Active {
-				g.Players[i].Score += g.PointValue
-				log.Printf("%s scored %d points\n", g.Players[i].Name, g.PointValue)
-			} else {
-				activeScore += g.PointValue
-			}
-		}
+		targetChoice = "higher"
 	case g.CurrentQuestion.Rating < target:
-		for i := range g.Players {
-			if g.Players[i].Choice == "lower" && !g.Players[i].Active {
-				log.Printf("%s scored %d points\n", g.Players[i].Name, g.PointValue)
-				g.Players[i].Score += g.PointValue
-			} else {
-				activeScore += g.PointValue
-			}
-		}
+		targetChoice = "lower"
 	case g.CurrentQuestion.Rating == target:
+		targetChoice = "exact"
 		exactScore = true
-		for i := range g.Players {
-			if g.Players[i].Choice == "exact" && !g.Players[i].Active {
-				g.Players[i].Score += g.PointValue + 5
-				log.Printf("%s scored %d points AND stole the 5 point bonus!\n", g.Players[i].Name, g.PointValue)
+	}
+	for i := range g.Players {
+		if g.Players[i].Choice == targetChoice && !g.Players[i].Active {
+			log.Printf("%s scored %d points\n", g.Players[i].Name, g.PointValue)
+			g.Players[i].Score += g.PointValue
+			if exactScore {
+				log.Printf("AND %s stole the cool 5 point bonus!\n", g.Players[i].Name)
+				g.Players[i].Score += 5
 				exactStole = true
-			} else {
-				activeScore += g.PointValue
 			}
+		} else {
+			activeScore += g.PointValue
 		}
 	}
 	for i := range g.Players {
@@ -153,14 +147,50 @@ func (g *GameState) ScoreQuestion() {
 	}
 }
 
+func (g *GameState) SoloScoreQuestion() {
+	var exact bool
+	difference := g.CurrentQuestion.Rating - g.Players[0].Guess
+	switch {
+	case difference < 0:
+		difference *= -1
+	case difference == 0:
+		exact = true
+	default:
+		// pass
+	}
+	if difference < 1.1 {
+		g.Players[0].Score += g.CurrentQuestion.Points
+		log.Printf("%s scored %d points\n", g.Players[0].Name, g.CurrentQuestion.Points)
+		if exact {
+			g.Players[0].Score += 5
+			log.Printf("%s scored a cool 5 point bonus!\n", g.Players[0].Name)
+		}
+	}
+}
+
+func (g *GameState) setActivePlayer() {
+	activePlayer := g.CurrentQuestion.ActivePlayer
+	for i := range g.Players {
+		if g.Players[i].Active {
+			g.Players[i].Active = false
+		}
+	}
+	g.Players[activePlayer].Active = true
+}
+
+const filepath string = "static/JSON/"
+
 var state GameState
 
 func main() {
 	port := flag.Int("port", 8080, "Port number for the server")
 	playerCount := flag.Int("players", 1, "Number of Players for game")
+	json := flag.String("json", "questions.json", "Path to json game file")
 	flag.Parse()
 
-	CreateGameState(&state, "static/JSON/questions/questions.json", playerCount)
+	gamePath := fmt.Sprintf("%squestions/%s", filepath, *json)
+
+	CreateGameState(&state, gamePath, *playerCount)
 
 	http.HandleFunc("/", indexHandler)
 	http.HandleFunc("/game", gameHandler)
@@ -195,19 +225,7 @@ func gameHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func loadGameFromJSON(state *GameState, filename string) {
-	var pcFilename string
-	switch state.ExpectedPlayerCount {
-	case 1:
-		pcFilename = "static/JSON/playercounts/1player.json"
-	case 2:
-		pcFilename = "static/JSON/playercounts/2player.json"
-	case 3:
-		pcFilename = "static/JSON/playercounts/3player.json"
-	case 4:
-		pcFilename = "static/JSON/playercounts/4player.json"
-	case 5:
-		pcFilename = "static/JSON/playercounts/5player.json"
-	}
+	PCountPath := fmt.Sprintf("%splayercounts/%dplayer.json", filepath, state.ExpectedPlayerCount)
 	data, err := os.ReadFile(filename)
 	if err != nil {
 		log.Fatalf("Failed to read game data from JSON: %v", err)
@@ -217,8 +235,8 @@ func loadGameFromJSON(state *GameState, filename string) {
 		log.Fatalf("Failed to read game data from JSON: %v", err)
 	}
 	var rounds PlayerCountSet
-	pcdata, err := os.ReadFile(pcFilename)
-	log.Println(pcFilename)
+	pcdata, err := os.ReadFile(PCountPath)
+	log.Println(PCountPath)
 	if err != nil {
 		log.Fatalf("Failed to read playercount data from JSON: %v", err)
 	}
@@ -263,7 +281,12 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 	})
 	state.Mutex.Lock()
 	defer state.Mutex.Unlock()
-	state.Players = append(state.Players, Player{Name: name})
+
+	var firstActive bool
+	if state.PlayerCount == 0 {
+		firstActive = true
+	}
+	state.Players = append(state.Players, Player{Name: name, Active: firstActive})
 	state.PlayerCount++
 	log.Printf("%s has joined. Count: %d/%d\n", name, state.PlayerCount, state.ExpectedPlayerCount)
 
@@ -314,6 +337,7 @@ func submitHandler(w http.ResponseWriter, r *http.Request) {
 		reader.ReadString('\n')
 		state.RoundAdvanced = false
 		state.ScoreQuestion()
+		state.setActivePlayer()
 		log.Println("Round Scored.")
 	}
 

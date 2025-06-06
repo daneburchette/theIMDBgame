@@ -35,7 +35,7 @@
 
 @font-face {
     font-family: 'JetBrainsMonoNF';
-    src: url('/static/JetbrainsMono/JetBrainsMonoNerdFont-Regular.ttf') format('truetype');
+    src: url('/static/JetBrainsMono/JetBrainsMonoNerdFont-Regular.ttf') format('truetype');
 }
 
 body {
